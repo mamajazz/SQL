@@ -1,19 +1,32 @@
-# SQL
-SQL Portfolio
+CREATE TABLE store (id INTEGER PRIMARY KEY, item TEXT, style TEXT, price INTEGER, popularity INTEGER);
 
--- Create a shop store database
-
-CREATE TABLE store (id INTEGER PRIMARY KEY, sku TEXT, material TEXT, aisle INTEGER, price INTEGER);
-INSERT INTO store VALUES (1, "MINKY248", "COTTON", 4, 59);
-INSERT INTO store VALUES (2, "cane243", "poly", 5, 69);
-INSERT INTO store VALUES (3, "MIiae3", "silk", 6, 59);
-INSERT INTO store VALUES (4, "traiw32", "COTTON", 4, 59);
+INSERT INTO store VALUES (1, "Lila", "overbust", 425, 51);
+INSERT INTO store VALUES (2, "Kayla", "underbust", 432, 295);
+INSERT INTO store VALUES (3, "Liana", "underbust", 252, 15);
+INSERT INTO store VALUES (4, "Kevin", "underbust", 92, 50);
+INSERT INTO store VALUES (5, "April", "overbust", 614, 55);
+INSERT INTO store VALUES (6, "Cherry", "overbust", 123, 63);
+INSERT INTO store VALUES (7, "Ansley", "underbust", 212, 65);
+INSERT INTO store VALUES (8, "Dion", "overbust", 252, 150);
+INSERT INTO store VALUES (9, "Cathy", "underbust", 234, 65);
+INSERT INTO store VALUES (10, "Beyonce", "overbust", 465, 225);
+INSERT INTO store VALUES (11, "Jasmine", "underbust", 102, 133);
+INSERT INTO store VALUES (12, "Dita", "underbust", 150, 160);
+INSERT INTO store VALUES (13, "Geraldine", "underbust", 199, 20);
+INSERT INTO store VALUES (14, "Tania", "overbust", 269, 81);
+INSERT INTO store VALUES (15, "Cecile", "underbust", 199, 60);
 
 --display the database ordered by price. 
 SELECT * FROM store
-ORDER BY price desc;
+ORDER BY price desc; 
 
---what is the average price of items in the cotton section? 
-SELECT AVG(price) "avg cotton item price"
+--what is the avg price of items in the underbust section? 
+SELECT AVG(price) "avg underbust price"
 FROM store
-where section='cotton';
+WHERE style ='underbust'; 
+
+--what are the most 5 popular items? 
+SELECT item, price, popularity
+FROM store
+order by popularity desc
+limit 5; 
