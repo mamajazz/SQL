@@ -122,18 +122,3 @@ FROM BIT_DB.JanSales
 GROUP BY product
 ORDER BY sum(quantity*price) desc 
 LIMIT 1
-
-# EXPLANATION
-# "Why do we use SUM(quantity*price) instead of SUM(quantity)*price?"
-# In this question, we are using GROUP BY product. 
-# The price of each individual product doesn't change. 
-# That's why SUM(quantity*price) and SUM(quantity)*price, in this specific question, both give the same results. 
-
-# To visualize this, run the following SQL and look at the results:
-select sum(quantity),
-price,
-sum(quantity)*price as revenue,
-sum(quantity*price) as revenue2,
-product 
-FROM BIT_DB.JanSales
-group by product
