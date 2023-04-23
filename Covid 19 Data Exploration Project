@@ -14,7 +14,10 @@ ORDER BY 3,
 
 --GLOBAL NUMBERS
 /* Table 1*/
-SELECT SUM(new_cases) AS total_cases, SUM(new_deaths) AS total_deaths, ROUND(SUM(new_deaths)/SUM(New_Cases)*100,4) AS DeathPercentage
+SELECT SUM(new_cases) 
+AS total_cases, SUM(new_deaths) 
+AS total_deaths, ROUND(SUM(new_deaths)/SUM(New_Cases)*100,4) 
+AS DeathPercentage
 FROM CovidDeaths
 WHERE continent IS NOT NULL
 
@@ -28,7 +31,8 @@ ORDER BY 1,
 
 -- Total Cases vs Total Deaths
 -- Shows likelihood of dying if one were to contract covid in their country
-SELECT location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 AS DeathPercentage
+SELECT location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 
+AS DeathPercentage
 FROM CovidDeaths
 WHERE continent IS NOT NULL
 AND location ILIKE '%states%'
@@ -36,7 +40,9 @@ ORDER BY 1,
 
 
 -- Checking United States Death rate status
-SELECT location, date, total_cases, total_deaths, MAX((total_deaths/total_cases))*100 AS DeathPercentage
+SELECT location, date, total_cases, total_deaths, 
+MAX((total_deaths/total_cases))*100 
+AS DeathPercentage
 FROM CovidDeaths
 WHERE continent IS NOT NULL
 AND location ILIKE '%states%'
