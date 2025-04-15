@@ -1,0 +1,33 @@
+--Customer Churn Analysis for a SaaS Company
+--Monthly Churn Rate
+SELECT
+  DATE_TRUNC('month', end_date) AS churn_month,
+  COUNT(*) AS churned_customers,
+  ROUND(100.0 * COUNT(*) / (
+    SELECT COUNT(*) 
+    FROM customers 
+    WHERE status = 'Active' OR status = 'Churned'
+  ), 2) AS churn_rate_percentage
+FROM subscriptions
+WHERE status = 'Churned'
+GROUP BY churn_month
+ORDER BY churn_month;
+
+--Feature Usage Prior To Churn
+SELECT 
+  pu.customer_id,
+  COUNT(DISTINCT pu.feature_used) AS features_used,
+  AVG(pu.duration_minutes) AS avg_session_time
+FROM product_usage pu
+JOIN subscriptions s ON pu.customer_id = s.customer_id
+WHERE s.status = 'Churned'
+AND pu.usage_date < s.end_date
+GROUP BY pu.customer_id;
+
+--Churn By Plan Type
+SELECT 
+  plan_type,
+  COUNT(*) AS churned_users
+FROM customers
+WHERE status = 'Churned'
+GROUP BY plan_type;
