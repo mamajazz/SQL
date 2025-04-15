@@ -1,0 +1,103 @@
+-- Inventory Optimization for eCommerce Efficiency
+--Products Table 
+CREATE TABLE products (
+    product_id VARCHAR(10) PRIMARY KEY,
+    product_name VARCHAR(100),
+    category VARCHAR(50),
+    cost_price DECIMAL(10, 2),
+    sell_price DECIMAL(10, 2),
+    stock_qty INT
+);
+
+INSERT INTO products VALUES 
+('P001', 'Cotton T-shirt', 'Apparel', 5.00, 12.00, 150),
+('P002', 'Leather Jacket', 'Apparel', 20.00, 45.00, 80),
+('P003', 'Running Shoes', 'Footwear', 15.00, 35.00, 200),
+('P004', 'Wool Scarf', 'Accessories', 8.00, 18.00, 120),
+('P005', 'Denim Jeans', 'Apparel', 10.00, 25.00, 180),
+('P006', 'Sunglasses', 'Accessories', 12.00, 30.00, 90),
+('P007', 'Baseball Cap', 'Accessories', 6.00, 15.00, 130),
+('P008', 'Hoodie', 'Apparel', 14.00, 30.00, 170),
+('P
+
+--Orders 
+CREATE TABLE orders (
+    order_id VARCHAR(10) PRIMARY KEY,
+    order_date DATE,
+    product_id VARCHAR(10),
+    quantity INT,
+    is_returned BOOLEAN,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+INSERT INTO orders VALUES 
+('O001', '2023-11-10', 'P001', 3, FALSE),
+('O002', '2023-11-12', 'P002', 2, FALSE),
+('O003', '2023-11-15', 'P001', 5, TRUE),
+('O004', '2023-11-18', 'P004', 1, FALSE),
+('O005', '2023-11-20', 'P005', 3, FALSE),
+('O006', '2023-11-22', 'P003', 4, FALSE),
+('O007', '2023-11-25', 'P007', 6, TRUE),
+('O008', '2023-11-28', 'P009', 2, FALSE),
+('O009', '2023-12-02', 'P008', 3, FALSE),
+('O010', '2023-12-05', 'P006', 2, TRUE);
+
+
+-- Inventory Turnover Rate Calculation
+WITH sales_data AS (
+    SELECT 
+        o.product_id,
+        SUM(o.quantity) AS total_sales,
+        SUM(CASE WHEN o.is_returned = TRUE THEN o.quantity ELSE 0 END) AS total_returns,
+        AVG(p.stock_qty) AS avg_inventory
+    FROM orders o
+    JOIN products p ON o.product_id = p.product_id
+    GROUP BY o.product_id
+)
+
+SELECT 
+    s.product_id,
+    p.product_name,
+    s.total_sales - s.total_returns AS net_sales,
+    s.avg_inventory,
+    CASE 
+        WHEN s.avg_inventory = 0 THEN 0
+        ELSE (s.total_sales - s.total_returns) / s.avg_inventory
+    END AS inventory_turnover_rate
+FROM sales_data s
+JOIN products p ON s.product_id = p.product_id;
+
+
+-- Most Returned Products
+WITH return_data AS (
+    SELECT 
+        o.product_id,
+        SUM(CASE WHEN o.is_returned = TRUE THEN o.quantity ELSE 0 END) AS total_returns
+    FROM orders o
+    GROUP BY o.product_id
+)
+
+SELECT 
+    r.product_id,
+    p.product_name,
+    r.total_returns
+FROM return_data r
+JOIN products p ON r.product_id = p.product_id
+ORDER BY r.total_returns DESC;
+
+-- Suggested Reorder Quantities (Average Sales - Average Returns + Safety Buffer)
+WITH sales_and_returns AS (
+    SELECT 
+        o.product_id,
+        AVG(o.quantity) AS avg_sales,
+        AVG(CASE WHEN o.is_returned = TRUE THEN o.quantity ELSE 0 END) AS avg_returns
+    FROM orders o
+    GROUP BY o.product_id
+)
+
+SELECT 
+    s.product_id,
+    p.product_name,
+    ROUND(s.avg_sales - s.avg_returns + 50, 0) AS suggested_reorder_qty
+FROM sales_and_returns s
+JOIN products p ON s.product_id = p.product_id;
